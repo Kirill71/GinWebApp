@@ -12,14 +12,14 @@ import (
 )
 
 const (
-	Url = "http://localhost:8181/"
+	Url = "http://localhost:8181/checkText"
 	BodyType = "application/json"
 	BadResponse = "HTTP Code 204 No Content"
 	Port = ":8181"
 )
 
 type Request struct {
-	Site []string // Slice of strings: https://blog.golang.org/go-slices-usage-and-internals
+	Site []string
 	SearchText string
 }
 func (r *Request )Init(_Site []string, _SearchText string){
@@ -44,7 +44,7 @@ func DecodeJSON(from [] byte, to interface{})error{
 func server(){
 	gin.SetMode(gin.ReleaseMode)
 	router:= gin.Default()
-	router.POST("",func (c *gin.Context){
+	router.POST("/checkText",func (c *gin.Context){
 		request :=new(Request)
 		response := new(Response)
 		requestBodyJSON,_:= ioutil.ReadAll(c.Request.Body)
@@ -70,7 +70,7 @@ func server(){
 func client(){
 	request:= new(Request)
 	response:= new(Response)
-	request.Init([]string {"https://google.com", "https://yahoo.com"},"Google")
+	request.Init([]string {"https://google.com", "https://yahoo.com"},"yahoo")
 	requestBodyJSON, err := json.Marshal(request)
 	CheckError("json was not encode",&err)
 	responseBytes,err:=http.Post(Url, BodyType, bytes.NewBuffer(requestBodyJSON))
