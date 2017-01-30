@@ -1,6 +1,5 @@
 package main
 
-
 import (
 	"fmt"
 	"encoding/json"
@@ -40,7 +39,6 @@ func DecodeJSON(from [] byte, to interface{})error{
 	return json.NewDecoder(bytes.NewBuffer(from)).Decode(to)
 }
 
-
 func server(){
 	gin.SetMode(gin.ReleaseMode)
 	router:= gin.Default()
@@ -57,20 +55,17 @@ func server(){
 				break
 			}
 		}
-		c.JSON(200, gin.H{
+		c.JSON(http.StatusOK, gin.H{
 			"FoundAtSite": response.FoundAtSite,
 		})
 	})
 	fmt.Println("Server started on port " + Port)
 	router.Run(Port)
-
 }
 
 
-func client(){
-	request:= new(Request)
+func client(request *Request){
 	response:= new(Response)
-	request.Init([]string {"https://google.com", "https://yahoo.com"},"yahoo")
 	requestBodyJSON, err := json.Marshal(request)
 	CheckError("json was not encode",&err)
 	responseBytes,err:=http.Post(Url, BodyType, bytes.NewBuffer(requestBodyJSON))
@@ -83,5 +78,11 @@ func client(){
 }
 func main() {
 	go server()
-	client()
+	request:= new(Request)
+	request.Init([]string {"https://google.com", "https://yahoo.com"},"lol")
+	client(request)
+	request.SearchText ="yahoo"
+	client(request)
+	request.SearchText = "Google"
+	client(request)
 }
